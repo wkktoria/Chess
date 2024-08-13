@@ -47,7 +47,58 @@ public class Piece {
         return row * Board.SQUARE_SIZE;
     }
 
+    public int getCol(final int x) {
+        return (x + Board.HALF_SQUARE_SIZE) / Board.SQUARE_SIZE;
+    }
+
+    public int getRow(final int y) {
+        return (y + Board.HALF_SQUARE_SIZE) / Board.SQUARE_SIZE;
+    }
+
     public void draw(final Graphics2D g2) {
         g2.drawImage(image, x, y, Board.SQUARE_SIZE, Board.SQUARE_SIZE, null);
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public int getCol() {
+        return col;
+    }
+
+    public void setCol(final int col) {
+        this.col = col;
+    }
+
+    public int getRow() {
+        return row;
+    }
+
+    public void setRow(final int row) {
+        this.row = row;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public void setX(final int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(final int y) {
+        this.y = y;
+    }
+
+    public void updatePosition() {
+        x = getX(col);
+        y = getY(row);
+        previousCol = getCol(x);
+        previousRow = getRow(y);
     }
 }

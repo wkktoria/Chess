@@ -19,11 +19,15 @@ public class GamePanel extends JPanel implements Runnable {
 
     private Thread gameThread;
     private Board board = new Board();
+    private Mouse mouse = new Mouse();
     private int currentColor = WHITE;
+    private Piece activePiece;
 
     public GamePanel() {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         setBackground(new Color(36, 26, 15));
+        addMouseMotionListener(mouse);
+        addMouseListener(mouse);
 
         setPieces();
         copyPieces(pieces, piecesOnBoard);
@@ -79,6 +83,33 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     private void update() {
+        if (mouse.isPressed()) {
+            if (activePiece == null) {
+                for (Piece piece : piecesOnBoard) {
+                    if (piece.getColor() == currentColor
+                            && piece.getCol() == mouse.getX() / Board.SQUARE_SIZE
+                            && piece.getRow() == mouse.getY() / Board.SQUARE_SIZE) {
+                        activePiece = piece;
+                    }
+                }
+            } else {
+                simulate();
+            }
+        }
+
+        if (!mouse.isPressed()) {
+            if (activePiece != null) {
+                activePiece.updatePosition();
+                activePiece = null;
+            }
+        }
+    }
+
+    private void simulate() {
+        activePiece.setX(mouse.getX() - Board.HALF_SQUARE_SIZE);
+        activePiece.setY(mouse.getY() - Board.HALF_SQUARE_SIZE);
+        activePiece.setCol(activePiece.getCol(activePiece.getX()));
+        activePiece.setRow(activePiece.getRow(activePiece.getY()));
     }
 
     @Override
@@ -92,11 +123,21 @@ public class GamePanel extends JPanel implements Runnable {
         for (Piece piece : piecesOnBoard) {
             piece.draw(g2);
         }
+
+        if (activePiece != null) {
+            g2.setColor(Color.WHITE);
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.75f));
+            g2.fillRect(activePiece.getCol() * Board.SQUARE_SIZE, activePiece.getRow() * Board.SQUARE_SIZE,
+                    Board.SQUARE_SIZE, Board.SQUARE_SIZE);
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+
+            activePiece.draw(g2);
+        }
     }
 
     @Override
     public void run() {
-        double drawInterval = 1000000000 / fps;
+        double drawInterval = (double) 1000000000 / fps;
         double delta = 0;
         long lastTime = System.nanoTime();
         long currentTime;
