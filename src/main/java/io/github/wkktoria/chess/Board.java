@@ -2,7 +2,7 @@ package io.github.wkktoria.chess;
 
 import java.awt.*;
 
-class Board {
+public class Board {
     public static final int SQUARE_SIZE = 100;
     private static final int HALF_SQUARE_SIZE = SQUARE_SIZE / 2;
 
