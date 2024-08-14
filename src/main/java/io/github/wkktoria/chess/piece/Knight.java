@@ -12,4 +12,15 @@ public class Knight extends Piece {
             image = getImage("/piece/b-knight");
         }
     }
+
+    @Override
+    public boolean canMove(final int targetCol, final int targetRow) {
+        if (isWithinBoard(targetCol, targetRow)) {
+            if (Math.abs(targetCol - previousCol) * Math.abs(targetRow - previousRow) == 2) {
+                return isValidSquare(targetCol, targetRow);
+            }
+        }
+
+        return false;
+    }
 }
