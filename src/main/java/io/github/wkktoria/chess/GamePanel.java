@@ -22,6 +22,8 @@ public class GamePanel extends JPanel implements Runnable {
     private Mouse mouse = new Mouse();
     private int currentColor = WHITE;
     private Piece activePiece;
+    private boolean canMove;
+    private boolean isValidSquare;
 
     public GamePanel() {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -56,7 +58,7 @@ public class GamePanel extends JPanel implements Runnable {
         pieces.add(new Bishop(WHITE, 2, 7));
         pieces.add(new Bishop(WHITE, 5, 7));
         pieces.add(new Queen(WHITE, 3, 7));
-        pieces.add(new King(WHITE, 4, 7));
+        pieces.add(new King(WHITE, 4, 4));
 
         // Black pieces
         pieces.add(new Pawn(BLACK, 0, 1));
@@ -99,17 +101,38 @@ public class GamePanel extends JPanel implements Runnable {
 
         if (!mouse.isPressed()) {
             if (activePiece != null) {
-                activePiece.updatePosition();
-                activePiece = null;
+                if (isValidSquare) {
+                    copyPieces(piecesOnBoard, pieces);
+                    activePiece.updatePosition();
+                } else {
+                    copyPieces(pieces, piecesOnBoard);
+                    activePiece.resetPosition();
+                    activePiece = null;
+                }
             }
         }
     }
 
     private void simulate() {
+        canMove = false;
+        isValidSquare = false;
+
+        copyPieces(pieces, piecesOnBoard);
+
         activePiece.setX(mouse.getX() - Board.HALF_SQUARE_SIZE);
         activePiece.setY(mouse.getY() - Board.HALF_SQUARE_SIZE);
         activePiece.setCol(activePiece.getCol(activePiece.getX()));
         activePiece.setRow(activePiece.getRow(activePiece.getY()));
+
+        if (activePiece.canMove(activePiece.getCol(), activePiece.getRow())) {
+            canMove = true;
+
+            if (activePiece.getHittingPiece() != null) {
+                piecesOnBoard.remove(activePiece.getHittingPiece().getIndex());
+            }
+
+            isValidSquare = true;
+        }
     }
 
     @Override
@@ -125,11 +148,13 @@ public class GamePanel extends JPanel implements Runnable {
         }
 
         if (activePiece != null) {
-            g2.setColor(Color.WHITE);
-            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.75f));
-            g2.fillRect(activePiece.getCol() * Board.SQUARE_SIZE, activePiece.getRow() * Board.SQUARE_SIZE,
-                    Board.SQUARE_SIZE, Board.SQUARE_SIZE);
-            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+            if (canMove) {
+                g2.setColor(Color.WHITE);
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.75f));
+                g2.fillRect(activePiece.getCol() * Board.SQUARE_SIZE, activePiece.getRow() * Board.SQUARE_SIZE,
+                        Board.SQUARE_SIZE, Board.SQUARE_SIZE);
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+            }
 
             activePiece.draw(g2);
         }

@@ -1,6 +1,7 @@
 package io.github.wkktoria.chess.piece;
 
 import io.github.wkktoria.chess.Board;
+import io.github.wkktoria.chess.GamePanel;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -15,6 +16,7 @@ public class Piece {
     protected int col, previousCol;
     protected int row, previousRow;
     protected int color;
+    protected Piece hittingPiece;
 
     public Piece(final int color, final int col, final int row) {
         this.color = color;
@@ -25,6 +27,14 @@ public class Piece {
         y = getY(row);
         previousCol = col;
         previousRow = row;
+    }
+
+    protected boolean isWithinBoard(final int col, final int row) {
+        return (col >= 0 && col <= 7) && (row >= 0 && row <= 7);
+    }
+
+    public boolean canMove(final int targetCol, final int targetRow) {
+        return isWithinBoard(targetCol, targetRow);
     }
 
     public BufferedImage getImage(final String imagePath) {
@@ -100,5 +110,52 @@ public class Piece {
         y = getY(row);
         previousCol = getCol(x);
         previousRow = getRow(y);
+    }
+
+    public void resetPosition() {
+        col = previousCol;
+        row = previousRow;
+        x = getX(col);
+        y = getY(row);
+    }
+
+    protected Piece getHittingPiece(final int targetCol, final int targetRow) {
+        for (Piece piece : GamePanel.piecesOnBoard) {
+            if (piece.getCol() == targetCol && piece.getRow() == targetRow && piece != this) {
+                return piece;
+            }
+        }
+
+        return null;
+    }
+
+    public boolean isValidSquare(final int targetCol, final int targetRow) {
+        hittingPiece = getHittingPiece(targetCol, targetRow);
+
+        if (hittingPiece == null) {
+            return true;
+        } else {
+            if (hittingPiece.getColor() != this.getColor()) {
+                return true;
+            } else {
+                hittingPiece = null;
+            }
+        }
+
+        return false;
+    }
+
+    public Piece getHittingPiece() {
+        return hittingPiece;
+    }
+
+    public int getIndex() {
+        for (int index = 0; index < GamePanel.piecesOnBoard.size(); index++) {
+            if (GamePanel.piecesOnBoard.get(index) == this) {
+                return index;
+            }
+        }
+
+        return -1;
     }
 }
