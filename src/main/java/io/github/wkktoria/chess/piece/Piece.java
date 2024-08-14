@@ -158,4 +158,52 @@ public class Piece {
 
         return -1;
     }
+
+    protected boolean isSameSquare(final int col, final int row) {
+        return col == previousCol && row == previousRow;
+    }
+
+    protected boolean isPieceOnStraightLine(final int targetCol, final int targetRow) {
+        // Piece moves to the left
+        for (int col = previousCol - 1; col > targetCol; col--) {
+            for (Piece piece : GamePanel.piecesOnBoard) {
+                if (piece.getCol() == col && piece.getRow() == targetRow) {
+                    hittingPiece = piece;
+                    return true;
+                }
+            }
+        }
+
+        // Piece moves to the right
+        for (int col = previousCol + 1; col < targetCol; col++) {
+            for (Piece piece : GamePanel.piecesOnBoard) {
+                if (piece.getCol() == col && piece.getRow() == targetRow) {
+                    hittingPiece = piece;
+                    return true;
+                }
+            }
+        }
+
+        // Piece moves up
+        for (int row = previousRow - 1; row > targetRow; row--) {
+            for (Piece piece : GamePanel.piecesOnBoard) {
+                if (piece.getCol() == targetCol && piece.getRow() == row) {
+                    hittingPiece = piece;
+                    return true;
+                }
+            }
+        }
+
+        // Piece moves down
+        for (int row = previousRow + 1; row < targetRow; row++) {
+            for (Piece piece : GamePanel.piecesOnBoard) {
+                if (piece.getCol() == targetCol && piece.getRow() == row) {
+                    hittingPiece = piece;
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }
