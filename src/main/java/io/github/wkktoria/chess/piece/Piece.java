@@ -17,6 +17,7 @@ public class Piece {
     protected int row, previousRow;
     protected int color;
     protected Piece hittingPiece;
+    protected boolean movedBefore = false;
 
     public Piece(final int color, final int col, final int row) {
         this.color = color;
@@ -110,6 +111,7 @@ public class Piece {
         y = getY(row);
         previousCol = getCol(x);
         previousRow = getRow(y);
+        movedBefore = true;
     }
 
     public void resetPosition() {
