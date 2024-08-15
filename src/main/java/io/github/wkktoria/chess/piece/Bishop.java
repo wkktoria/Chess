@@ -12,4 +12,15 @@ public class Bishop extends Piece {
             image = getImage("/piece/b-bishop");
         }
     }
+
+    @Override
+    public boolean canMove(final int targetCol, final int targetRow) {
+        if (isWithinBoard(targetCol, targetRow) && !isSameSquare(targetCol, targetRow)) {
+            if (Math.abs(targetCol - previousCol) == Math.abs(targetRow - previousRow)) {
+                return isValidSquare(targetCol, targetRow) && !isPieceOnDiagonalLine(targetCol, targetRow);
+            }
+        }
+
+        return false;
+    }
 }
