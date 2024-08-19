@@ -14,9 +14,9 @@ public class GamePanel extends JPanel implements Runnable {
 
     public static ArrayList<Piece> pieces = new ArrayList<>();
     public static ArrayList<Piece> piecesOnBoard = new ArrayList<>();
+    public static Piece castlingPiece;
 
     private final int fps = 60;
-
     private Thread gameThread;
     private Board board = new Board();
     private Mouse mouse = new Mouse();
@@ -53,11 +53,11 @@ public class GamePanel extends JPanel implements Runnable {
         pieces.add(new Pawn(WHITE, 7, 6));
         pieces.add(new Rook(WHITE, 0, 7));
         pieces.add(new Rook(WHITE, 7, 7));
-        pieces.add(new Knight(WHITE, 1, 7));
-        pieces.add(new Knight(WHITE, 6, 7));
-        pieces.add(new Bishop(WHITE, 2, 7));
-        pieces.add(new Bishop(WHITE, 5, 7));
-        pieces.add(new Queen(WHITE, 3, 7));
+//        pieces.add(new Knight(WHITE, 1, 7));
+//        pieces.add(new Knight(WHITE, 6, 7));
+//        pieces.add(new Bishop(WHITE, 2, 7));
+//        pieces.add(new Bishop(WHITE, 5, 7));
+//        pieces.add(new Queen(WHITE, 3, 7));
         pieces.add(new King(WHITE, 4, 7));
 
         // Black pieces
@@ -105,6 +105,10 @@ public class GamePanel extends JPanel implements Runnable {
                     copyPieces(piecesOnBoard, pieces);
                     activePiece.updatePosition();
 
+                    if (castlingPiece != null) {
+                        castlingPiece.updatePosition();
+                    }
+
                     changePlayer();
                 } else {
                     copyPieces(pieces, piecesOnBoard);
@@ -121,6 +125,12 @@ public class GamePanel extends JPanel implements Runnable {
 
         copyPieces(pieces, piecesOnBoard);
 
+        if (castlingPiece != null) {
+            castlingPiece.setCol(castlingPiece.getPreviousCol());
+            castlingPiece.setX(castlingPiece.getCol());
+            castlingPiece = null;
+        }
+
         activePiece.setX(mouse.getX() - Board.HALF_SQUARE_SIZE);
         activePiece.setY(mouse.getY() - Board.HALF_SQUARE_SIZE);
         activePiece.setCol(activePiece.getCol(activePiece.getX()));
@@ -132,6 +142,8 @@ public class GamePanel extends JPanel implements Runnable {
             if (activePiece.getHittingPiece() != null) {
                 piecesOnBoard.remove(activePiece.getHittingPiece().getIndex());
             }
+
+            checkCastling();
 
             isValidSquare = true;
         }
@@ -145,6 +157,18 @@ public class GamePanel extends JPanel implements Runnable {
         }
 
         activePiece = null;
+    }
+
+    private void checkCastling() {
+        if (castlingPiece != null) {
+            if (castlingPiece.getCol() == 0) {
+                castlingPiece.setCol(castlingPiece.getCol() + 3);
+            } else if (castlingPiece.getCol() == 7) {
+                castlingPiece.setCol(castlingPiece.getCol() - 2);
+            }
+
+            castlingPiece.setX(castlingPiece.getX(castlingPiece.getCol()));
+        }
     }
 
     @Override

@@ -151,6 +151,10 @@ public class Piece {
         return hittingPiece;
     }
 
+    public int getPreviousCol() {
+        return previousCol;
+    }
+
     public int getIndex() {
         for (int index = 0; index < GamePanel.piecesOnBoard.size(); index++) {
             if (GamePanel.piecesOnBoard.get(index) == this) {
