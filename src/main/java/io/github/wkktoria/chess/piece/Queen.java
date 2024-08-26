@@ -1,10 +1,13 @@
 package io.github.wkktoria.chess.piece;
 
 import io.github.wkktoria.chess.GamePanel;
+import io.github.wkktoria.chess.Type;
 
 public class Queen extends Piece {
     public Queen(final int color, final int col, final int row) {
         super(color, col, row);
+
+        type = Type.QUEEN;
 
         if (color == GamePanel.WHITE) {
             image = getImage("/piece/w-queen");

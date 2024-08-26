@@ -2,6 +2,7 @@ package io.github.wkktoria.chess.piece;
 
 import io.github.wkktoria.chess.Board;
 import io.github.wkktoria.chess.GamePanel;
+import io.github.wkktoria.chess.Type;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -10,6 +11,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class Piece {
+    protected Type type;
     protected BufferedImage image;
     protected int x;
     protected int y;
@@ -18,6 +20,7 @@ public class Piece {
     protected int color;
     protected Piece hittingPiece;
     protected boolean movedBefore = false;
+    protected boolean twoStepped;
 
     public Piece(final int color, final int col, final int row) {
         this.color = color;
@@ -106,7 +109,21 @@ public class Piece {
         this.y = y;
     }
 
+    public boolean isTwoStepped() {
+        return twoStepped;
+    }
+
+    public void setTwoStepped(final boolean twoStepped) {
+        this.twoStepped = twoStepped;
+    }
+
     public void updatePosition() {
+        if (type == Type.PAWN) {
+            if (Math.abs(row - previousRow) == 2) {
+                twoStepped = true;
+            }
+        }
+
         x = getX(col);
         y = getY(row);
         previousCol = getCol(x);

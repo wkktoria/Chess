@@ -1,10 +1,13 @@
 package io.github.wkktoria.chess.piece;
 
 import io.github.wkktoria.chess.GamePanel;
+import io.github.wkktoria.chess.Type;
 
 public class Pawn extends Piece {
     public Pawn(final int color, final int col, final int row) {
         super(color, col, row);
+
+        type = Type.PAWN;
 
         if (color == GamePanel.WHITE) {
             image = getImage("/piece/w-pawn");
@@ -41,6 +44,16 @@ public class Pawn extends Piece {
             if (Math.abs(targetCol - previousCol) == 1 && targetRow == previousRow + moveDirection.getValue()
                     && hittingPiece != null && hittingPiece.getColor() != color) {
                 return true;
+            }
+
+            // En passant
+            if (Math.abs(targetCol - previousCol) == 1 && targetRow == previousRow + moveDirection.getValue()) {
+                for (Piece piece : GamePanel.piecesOnBoard) {
+                    if (piece.getCol() == targetCol && piece.getRow() == previousRow && piece.isTwoStepped()) {
+                        hittingPiece = piece;
+                        return true;
+                    }
+                }
             }
         }
 
