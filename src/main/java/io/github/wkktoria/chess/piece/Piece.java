@@ -37,8 +37,16 @@ public class Piece {
         return (col >= 0 && col <= 7) && (row >= 0 && row <= 7);
     }
 
+    public Type getType() {
+        return type;
+    }
+
     public boolean canMove(final int targetCol, final int targetRow) {
         return isWithinBoard(targetCol, targetRow);
+    }
+
+    public BufferedImage getImage() {
+        return image;
     }
 
     public BufferedImage getImage(final String imagePath) {
