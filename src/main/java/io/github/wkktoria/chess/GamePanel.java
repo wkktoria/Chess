@@ -155,7 +155,9 @@ public class GamePanel extends JPanel implements Runnable {
 
             checkCastling();
 
-            isValidSquare = true;
+            if (!isIllegalKingMove(activePiece)) {
+                isValidSquare = true;
+            }
         }
     }
 
@@ -240,6 +242,20 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
 
+    private boolean isIllegalKingMove(final Piece king) {
+        if (king.getType() != Type.KING) {
+            return false;
+        }
+
+        for (Piece piece : piecesOnBoard) {
+            if (piece != king && piece.getColor() != king.getColor() && piece.canMove(king.getCol(), king.getRow())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     @Override
     protected void paintComponent(final Graphics g) {
         super.paintComponent(g);
@@ -254,7 +270,11 @@ public class GamePanel extends JPanel implements Runnable {
 
         if (activePiece != null) {
             if (canMove) {
-                g2.setColor(Color.WHITE);
+                if (isIllegalKingMove(activePiece)) {
+                    g2.setColor(Color.RED);
+                } else {
+                    g2.setColor(Color.WHITE);
+                }
                 g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.75f));
                 g2.fillRect(activePiece.getCol() * Board.SQUARE_SIZE, activePiece.getRow() * Board.SQUARE_SIZE,
                         Board.SQUARE_SIZE, Board.SQUARE_SIZE);
